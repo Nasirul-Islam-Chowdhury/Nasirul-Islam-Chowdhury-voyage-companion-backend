@@ -1,25 +1,39 @@
-import express from "express";
-import { UserControllers } from "./user.controllers";
-import { validateRequest } from "../../middlewares/validateRequest";
-import auth from "../../middlewares/auth";
-import { ZodValidations } from "./user.validation";
+import express, { NextFunction, Request, Response } from 'express';
+import { userController } from './user.controller';
+import auth from '../../middlewares/auth';
+import { UserRole } from '@prisma/client';
+import { userValidation } from './user.validation';
+import validateRequest from '../../middlewares/validateRequest';
 
-export const userRouter = express.Router();
+const router = express.Router();
 
-userRouter.post(
-  "/create-user",
-  auth("admin"),
-  validateRequest(ZodValidations.createUserValidation),
-  UserControllers.createUser
+router.get(
+    '/',
+    auth(UserRole.USER, UserRole.ADMIN),
+    userController.getAllFromDB
 );
 
-userRouter.put(
-  "/update-user/:id",
-  auth("admin"),
-  [validateRequest(ZodValidations.updateUserValidation)],
-  UserControllers.updateUser
+router.get(
+    '/me',
+    auth(UserRole.ADMIN, UserRole.USER),
+    userController.getMyProfile
+)
+
+
+
+
+router.patch(
+    '/:id/status',
+    auth(UserRole.USER, UserRole.ADMIN),
+    // validateRequest(userValidation.updateStatus),
+    userController.changeProfileStatus
 );
 
-userRouter.put("/delete-user/:id", auth("admin"), UserControllers.deleteUser);
+router.patch(
+    "/update-my-profile",
+    auth(UserRole.ADMIN, UserRole.USER),
+    
+);
 
-userRouter.get("/me", auth("admin", "user"), UserControllers.getMe);
+
+export const userRoutes = router;

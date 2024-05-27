@@ -1,42 +1,39 @@
-import express from "express";
-import { validateRequest } from "../../middlewares/validateRequest";
-import { AuthValidation } from "./auth.validation";
-import { AuthControllers } from "./auth.controllers";
-import auth from "../../middlewares/auth";
-import { USER_ROLE } from "../../interfaces/app.types";
+import express from 'express';
+import { AuthController } from './auth.controller';
+import auth from '../../middlewares/auth';
+import { UserRole } from '@prisma/client';
 
 const router = express.Router();
 
 router.post(
-  "/login",
-  validateRequest(AuthValidation.loginValidationSchema),
-  AuthControllers.loginUser
+    '/login',
+    AuthController.loginUser
 );
 
 router.post(
-  "/change-password",
-  auth(USER_ROLE.admin),
-  validateRequest(AuthValidation.changePasswordValidationSchema),
-  AuthControllers.changePassword
+    '/refresh-token',
+    AuthController.refreshToken
+)
+
+router.post(
+    '/change-password',
+    auth(
+        UserRole.SUPER_ADMIN,
+        UserRole.ADMIN,
+        UserRole.DOCTOR,
+        UserRole.PATIENT
+    ),
+    AuthController.changePassword
 );
 
 router.post(
-  "/refresh-token",
-  validateRequest(AuthValidation.refreshTokenValidationSchema),
-  AuthControllers.refreshToken
-);
-
-router.get(
-  "/forget-password",
-  auth("admin"),
-  AuthControllers.forgetPassword
+    '/forgot-password',
+    AuthController.forgotPassword
 );
 
 router.post(
-  "/reset-password",
-  auth("admin"),
-  validateRequest(AuthValidation.resetPasswordValidationSchema),
-  AuthControllers.resetPassword
-);
+    '/reset-password',
+    AuthController.resetPassword
+)
 
-export const authRouter = router;
+export const AuthRoutes = router;

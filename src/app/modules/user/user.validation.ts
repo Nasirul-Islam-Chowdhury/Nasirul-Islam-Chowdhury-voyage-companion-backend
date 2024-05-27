@@ -1,30 +1,20 @@
 import { z } from "zod";
 
-export const createUserValidation = z.object({
-  userId: z.string({
-    required_error: `useId is required!`,
-    invalid_type_error: `Invalid ID!`,
-  }),
-  email: z
-    .string({
-      required_error: `Email is required!`,
-      invalid_type_error: `Invalid email!`,
-    })
-    .email({ message: `Invalid email address!` }),
-  mobile: z
-    .string({
-      required_error: `Mobile is required!`,
-      invalid_type_error: `Invalid mobile!`,
-    })
-    .refine((value) => /^\d{11}$/.test(value), {
-      message: "Mobile number must be a 11-digit number.",
+const createUser = z.object({
+  body: z.object({
+    id: z.number().int().positive().optional(),
+    email: z
+      .string({
+        required_error: "email is required",
+      })
+      .email(),
+    username: z.string(),
+    password: z.string().min(6, "password must be at least 6 characters"),
+    status: z.string().optional(),
+    role: z.string({
+      required_error: "role is required",
     }),
-  password: z.string({
-    required_error: `Password is required!`,
-    invalid_type_error: `Invalid password!`,
   }),
 });
 
-export const updateUserValidation = createUserValidation.partial();
-
-export const ZodValidations = { createUserValidation, updateUserValidation };
+export const userValidation = { createUser };
