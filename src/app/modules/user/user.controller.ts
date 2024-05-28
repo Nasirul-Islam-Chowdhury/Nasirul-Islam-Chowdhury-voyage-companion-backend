@@ -1,12 +1,10 @@
-import { Request, RequestHandler, Response } from "express";
+import { Request, Response } from "express";
 import { userService } from "./user.sevice";
 import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import pick from "../../../shared/pick";
 import { userFilterableFields } from "./user.constant";
-import { UserRole } from "@prisma/client";
-import { JwtPayload } from "jsonwebtoken";
 import { IAuthUser } from "../../interfaces/common";
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
@@ -14,7 +12,7 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Admin Created successfuly!",
+    message: "User Created successfully!",
     data: result,
   });
 });
@@ -37,7 +35,7 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
 
 const changeProfileStatus = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await userService.changeProfileStatus(Number(id), req.body);
+  const result = await userService.changeProfileStatus(id, req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

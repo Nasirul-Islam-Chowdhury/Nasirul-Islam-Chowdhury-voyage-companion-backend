@@ -14,6 +14,14 @@ const createUser = z.object({
     role: z.string({
       required_error: "role is required",
     }),
+    profile: z
+      .object({
+        bio: z.string().optional(),
+        age: z.number().optional(),
+        contactNumber: z.number().optional(),
+        userId: z.string().optional(),
+      })
+      .optional(),
   }),
 });
 

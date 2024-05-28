@@ -5,7 +5,7 @@ import { UserRole } from "@prisma/client";
 const router = express.Router();
 
 
-router.get('/profile', auth(UserRole.ADMIN, UserRole.USER), profileController.getUserProfile)
-router.get('/update-profile', auth(UserRole.ADMIN, UserRole.USER), profileController.updateProfile)
+router.get('/', auth(UserRole.ADMIN, UserRole.USER), profileController.getUserProfile)
+router.patch('/update', auth(UserRole.ADMIN, UserRole.USER), profileController.updateProfile)
 
 export const ProfileRoutes = router

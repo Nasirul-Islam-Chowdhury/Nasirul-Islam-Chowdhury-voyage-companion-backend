@@ -7,6 +7,10 @@ import validateRequest from '../../middlewares/validateRequest';
 
 const router = express.Router();
 
+
+router.post('/create', userController.createUser)
+
+
 router.get(
     '/',
     auth(UserRole.USER, UserRole.ADMIN),

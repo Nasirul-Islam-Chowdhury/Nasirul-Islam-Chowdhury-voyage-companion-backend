@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Profile" ALTER COLUMN "bio" DROP NOT NULL,
+ALTER COLUMN "age" DROP NOT NULL,
+ALTER COLUMN "contactNumber" DROP NOT NULL;

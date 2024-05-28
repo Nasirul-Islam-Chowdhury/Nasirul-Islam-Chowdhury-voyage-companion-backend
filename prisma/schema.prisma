@@ -53,11 +53,11 @@ model TravelRequest {
 
 model Profile {
   id        String   @id @default(uuid())
-  bio       String
-  age       Int
+  bio       String?
+  age       Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  contactNumber String
+  contactNumber String?
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique
 }
