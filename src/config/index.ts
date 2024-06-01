@@ -19,5 +19,7 @@ export default {
         email: process.env.EMAIL,
         app_pass: process.env.APP_PASS
     },
-
+    bcrypt: {
+        salt_round: process.env.SALT_ROUND
+    }
 }

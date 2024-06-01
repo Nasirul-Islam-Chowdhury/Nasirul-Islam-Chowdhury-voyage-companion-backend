@@ -5,13 +5,27 @@ import { IPaginationOptions } from "../../interfaces/pagination";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import { userSearchAbleFields } from "./user.constant";
 import { IAuthUser } from "../../interfaces/common";
-
+import ApiError from "../../errors/ApiError";
+import bcrypt from "bcrypt";
+import config from "../../../config";
 const createUser = async (data: User & { profile: Profile }) => {
-  const { profile, ...restData } = data;
-
+  const { profile, password, ...restData } = data;
+  const hashedPassword = await bcrypt.hash(
+    password,
+    Number(config.bcrypt.salt_round)
+  );
+  const isUserExists = await prisma.user.findFirst({
+    where: {
+      email: restData.email,
+    },
+  });
+  if (isUserExists) {
+    throw new ApiError(500, "User Already exists");
+  }
+  console.log(hashedPassword);
   const result = await prisma.$transaction(async (tx) => {
     const user = await tx.user.create({
-      data: restData,
+      data: { ...restData, password: hashedPassword },
     });
     const userId = user.id;
     const profileData = { ...profile, userId };
@@ -25,7 +39,6 @@ const createUser = async (data: User & { profile: Profile }) => {
 
   return result;
 };
-
 
 const getAllFromDB = async (params: any, options: IPaginationOptions) => {
   const { page, limit, skip } = paginationHelper.calculatePagination(options);

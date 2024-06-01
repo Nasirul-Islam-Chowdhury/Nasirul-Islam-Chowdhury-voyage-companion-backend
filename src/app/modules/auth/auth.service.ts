@@ -1,10 +1,10 @@
 import { UserStatus } from "@prisma/client";
 import { jwtHelpers } from "../../../helpers/jwtHelpers";
 import prisma from "../../../shared/prisma";
-import * as bcrypt from 'bcrypt'
+import  bcrypt from 'bcrypt'
 import config from "../../../config";
 import { Secret } from "jsonwebtoken";
-import emailSender from "./emailSender";
+
 import ApiError from "../../errors/ApiError";
 import httpStatus from "http-status";
 
@@ -18,8 +18,12 @@ const loginUser = async (payload: {
             status: UserStatus.ACTIVE
         }
     });
-
+    if(!userData){
+        throw  new ApiError(500, "User not found");
+    }
+    console.log(payload.password, userData.password)
     const isCorrectPassword: boolean = await bcrypt.compare(payload.password, userData.password);
+    console.log(isCorrectPassword)
 
     if (!isCorrectPassword) {
         throw new Error("Password incorrect!")
@@ -43,7 +47,7 @@ const loginUser = async (payload: {
     return {
         accessToken,
         refreshToken,
-        needPasswordChange: userData.needPasswordChange
+
     };
 };
 
@@ -73,7 +77,6 @@ const refreshToken = async (token: string) => {
 
     return {
         accessToken,
-        needPasswordChange: userData.needPasswordChange
     };
 
 };
@@ -100,7 +103,6 @@ const changePassword = async (user: any, payload: any) => {
         },
         data: {
             password: hashedPassword,
-            needPasswordChange: false
         }
     })
 
@@ -126,22 +128,22 @@ const forgotPassword = async (payload: { email: string }) => {
 
     const resetPassLink = config.reset_pass_link + `?userId=${userData.id}&token=${resetPassToken}`
 
-    await emailSender(
-        userData.email,
-        `
-        <div>
-            <p>Dear User,</p>
-            <p>Your password reset link 
-                <a href=${resetPassLink}>
-                    <button>
-                        Reset Password
-                    </button>
-                </a>
-            </p>
+    // await emailSender(
+    //     userData.email,
+    //     `
+    //     <div>
+    //         <p>Dear User,</p>
+    //         <p>Your password reset link 
+    //             <a href=${resetPassLink}>
+    //                 <button>
+    //                     Reset Password
+    //                 </button>
+    //             </a>
+    //         </p>
 
-        </div>
-        `
-    )
+    //     </div>
+    //     `
+    // )
     //console.log(resetPassLink)
 };
 
