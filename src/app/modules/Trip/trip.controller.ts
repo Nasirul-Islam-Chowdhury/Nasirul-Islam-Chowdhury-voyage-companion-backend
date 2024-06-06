@@ -25,7 +25,7 @@ const createTrip = catchAsync(
 const getAllTrips = catchAsync(async (req: Request, res: Response) => {
 
 	const filters = pick(req.query, tripFilterableFields);
-	console.log(filters);
+
 	const options = pick(req.query, ["limit","page","sortBy", "sortOrder", ])
 	
 	

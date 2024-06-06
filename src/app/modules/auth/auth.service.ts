@@ -3,7 +3,6 @@ import { jwtHelpers } from "../../../helpers/jwtHelpers";
 import prisma from "../../../shared/prisma";
 import bcrypt from "bcrypt";
 import config from "../../../config";
-import { Secret } from "jsonwebtoken";
 
 import ApiError from "../../errors/ApiError";
 import httpStatus from "http-status";

@@ -35,7 +35,7 @@ const createUser = async (data: User & { profile: Profile }) => {
     await tx.profile.create({
       data: profileData,
     });
-    console.log(user)
+
     return user;
   });
 
@@ -48,7 +48,7 @@ const getAllFromDB = async (params: any, options: IPaginationOptions) => {
 
   const andCondions: Prisma.UserWhereInput[] = [];
 
-  //console.log(filterData);
+
   if (params.searchTerm) {
     andCondions.push({
       OR: userSearchAbleFields.map((field) => ({

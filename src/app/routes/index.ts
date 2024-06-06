@@ -23,7 +23,7 @@ const moduleRoutes = [
   {
     path: "/trips",
     route: TravelRoutes,
-  },
+  },  
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

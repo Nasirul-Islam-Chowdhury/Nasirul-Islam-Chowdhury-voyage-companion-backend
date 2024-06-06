@@ -33,7 +33,7 @@ const getAllTrips = async (
 ) => {
   const { page, limit, skip } = paginationHelper.calculatePagination(options);
   const { searchTerm, ...filterData } = query;
-    console.log(searchTerm)
+
   const queryResult: Prisma.TripWhereInput[] = [];
 
   if (searchTerm) {
@@ -46,7 +46,7 @@ const getAllTrips = async (
       })),
     });
   }
-  console.log(queryResult)
+
 
 
   if (Object.keys(filterData).length > 0) {
