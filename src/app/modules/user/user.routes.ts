@@ -8,7 +8,7 @@ import validateRequest from '../../middlewares/validateRequest';
 const router = express.Router();
 
 
-router.post('/create', userController.createUser)
+router.post('/register', userController.createUser)
 
 
 router.get(

@@ -3,15 +3,18 @@ import auth from "../../middlewares/auth";
 import validateRequest from "../../middlewares/validateRequest";
 import { tripValidation } from "./trip.validation";
 import { tripController } from "./trip.controller";
+import { UserRole } from "@prisma/client";
 
 const router = Router();
 
 router.post(
   "/",
-  auth(),
+  auth(UserRole.ADMIN, UserRole.USER),
   validateRequest(tripValidation.createTrip),
   tripController.createTrip
 );
-router.get("/", auth(), tripController.getAllTrips);
+router.get("/", 
+  // auth(UserRole.ADMIN, UserRole.USER),
+   tripController.getAllTrips);
 
 export const TravelRoutes = router;

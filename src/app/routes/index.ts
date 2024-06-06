@@ -21,7 +21,7 @@ const moduleRoutes = [
     route: ProfileRoutes,
   },
   {
-    path: "/travel",
+    path: "/trips",
     route: TravelRoutes,
   },
 ];

@@ -8,6 +8,8 @@ import { IAuthUser } from "../../interfaces/common";
 import ApiError from "../../errors/ApiError";
 import bcrypt from "bcrypt";
 import config from "../../../config";
+
+
 const createUser = async (data: User & { profile: Profile }) => {
   const { profile, password, ...restData } = data;
   const hashedPassword = await bcrypt.hash(
@@ -22,7 +24,7 @@ const createUser = async (data: User & { profile: Profile }) => {
   if (isUserExists) {
     throw new ApiError(500, "User Already exists");
   }
-  console.log(hashedPassword);
+
   const result = await prisma.$transaction(async (tx) => {
     const user = await tx.user.create({
       data: { ...restData, password: hashedPassword },
@@ -33,7 +35,7 @@ const createUser = async (data: User & { profile: Profile }) => {
     await tx.profile.create({
       data: profileData,
     });
-
+    console.log(user)
     return user;
   });
 
@@ -143,7 +145,7 @@ const updateMyProfie = async (user: IAuthUser, req: Request) => {
   return profileInfo;
 };
 const getMyProfile = (data: IAuthUser) => {
-  console.log(data);
+
   return null;
 };
 
