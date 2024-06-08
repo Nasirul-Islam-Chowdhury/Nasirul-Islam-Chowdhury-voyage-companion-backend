@@ -4,6 +4,7 @@ import prisma from "../../../shared/prisma";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { searchAbleKey } from "./trip.constant";
+import ApiError from "../../errors/ApiError";
 
 export interface ITripFilterRequest {
   destination?: string | undefined;
@@ -13,11 +14,19 @@ export interface ITripFilterRequest {
 }
 
 const createTrip = async (payload: Trip, user: JwtPayload) => {
-
   const data = {
     ...payload,
     userId: user?.userId,
   };
+  const isTripExists = await prisma.trip.findFirst({
+    where: {
+      userId: user.userId,
+      destination: data.destination,
+      startDate: data.startDate,
+      endDate: data.endDate,
+    },
+  });
+  if (isTripExists) throw new ApiError(500, "Trip already exists");
 
   const result = await prisma.trip.create({
     data: data,
@@ -46,8 +55,6 @@ const getAllTrips = async (
       })),
     });
   }
-
-
 
   if (Object.keys(filterData).length > 0) {
     queryResult.push({
@@ -86,7 +93,15 @@ const getAllTrips = async (
     data: result,
   };
 };
+
+
+
+const deleteTrip = async (id:string)=>{
+  const result = await prisma.trip.delete({where:{id: id}});
+  return result
+}
 export const tripServices = {
   createTrip,
   getAllTrips,
+  deleteTrip
 };

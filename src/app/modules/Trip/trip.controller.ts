@@ -41,7 +41,22 @@ const getAllTrips = catchAsync(async (req: Request, res: Response) => {
 		data: result.data,
 	});
 });
+
+
+
+const deleteTrip = catchAsync(async (req: Request, res: Response) => {
+	const result = await tripServices.deleteTrip(req.params.id);
+	sendResponse(res, {
+        success: true,
+		statusCode: 200,
+		message: "Trips retrieved successfully",
+		data: result,
+	});
+})
+
+// const getSingleTrip =
 export const tripController = {
 	createTrip,
 	getAllTrips,
+	deleteTrip
 };

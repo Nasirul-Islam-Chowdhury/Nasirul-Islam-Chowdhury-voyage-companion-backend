@@ -1,4 +1,4 @@
-import { Prisma, Profile, User, UserRole } from "@prisma/client";
+import { Prisma, Profile, User, UserRole, UserStatus } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import { Request } from "express";
 import { IPaginationOptions } from "../../interfaces/pagination";
@@ -109,18 +109,19 @@ const getAllFromDB = async (params: any, options: IPaginationOptions) => {
   };
 };
 
-const changeProfileStatus = async (id: string, status: UserRole) => {
+const changeProfileStatus = async (id: string, status: UserStatus) => {
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
       id,
     },
   });
-
+  if(!userData) throw new ApiError(500, "User not found");
+  
   const updateUserStatus = await prisma.user.update({
     where: {
       id,
     },
-    data: status,
+    data: {status:status},
   });
 
   return updateUserStatus;
@@ -144,9 +145,12 @@ const updateMyProfie = async (user: IAuthUser, req: Request) => {
 
   return profileInfo;
 };
-const getMyProfile = (data: IAuthUser) => {
 
-  return null;
+const getMyProfile = async(data: IAuthUser) => {
+  const res = await prisma.user.findFirst({where:{email: data?.email}}) as User
+
+  const  {password,...finalRes} = res;
+  return finalRes;
 };
 
 export const userService = {

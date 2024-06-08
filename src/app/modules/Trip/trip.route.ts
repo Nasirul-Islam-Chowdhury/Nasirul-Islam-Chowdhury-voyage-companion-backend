@@ -14,7 +14,11 @@ router.post(
   tripController.createTrip
 );
 router.get("/", 
-  // auth(UserRole.ADMIN, UserRole.USER),
+  auth(UserRole.ADMIN, UserRole.USER),
    tripController.getAllTrips);
+
+router.delete("/:id", 
+  auth(UserRole.ADMIN),
+   tripController.deleteTrip);
 
 export const TravelRoutes = router;

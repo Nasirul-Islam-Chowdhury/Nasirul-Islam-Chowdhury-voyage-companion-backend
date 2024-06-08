@@ -11,7 +11,7 @@ const loginUser = async (payload: { email: string; password: string }) => {
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
       email: payload.email,
-      // status: UserStatus.ACTIVE
+      status: UserStatus.ACTIVE
     },
   });
   if (!userData) {
@@ -25,13 +25,13 @@ const loginUser = async (payload: { email: string; password: string }) => {
 
 
   if (!isCorrectPassword) {
-    throw new Error("Password incorrect!");
+    throw new Error("Password is incorrect!");
   }
   const accessToken = jwtHelpers.generateToken(
     {
       email: userData.email,
       userId: userData.id,
-      role: "USER",
+      role: userData.role,
     },
     config.jwt.jwt_secret as string,
     config.jwt.expires_in as string
@@ -41,7 +41,7 @@ const loginUser = async (payload: { email: string; password: string }) => {
     {
       email: userData.email,
       userId: userData.id,
-      role: "USER",
+      role: userData.role,
     },
     config.jwt.refresh_token_secret as string,
     config.jwt.refresh_token_expires_in as string

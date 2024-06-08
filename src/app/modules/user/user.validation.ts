@@ -25,4 +25,10 @@ const createUser = z.object({
   }),
 });
 
-export const userValidation = { createUser };
+const updateStatus = z.object({
+  body: z.object({
+    status: z.string().optional(),
+  }),
+});
+
+export const userValidation = { createUser, updateStatus };
