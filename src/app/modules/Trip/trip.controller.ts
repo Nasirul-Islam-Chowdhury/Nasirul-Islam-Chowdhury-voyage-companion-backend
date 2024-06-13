@@ -5,58 +5,80 @@ import pick from "../../../shared/pick";
 import sendResponse from "../../../shared/sendResponse";
 import { tripServices } from "./trip.service";
 
-
 const createTrip = catchAsync(
-	async (req: Request & { user?: any }, res: Response) => {
-		const user = req.user;
-		const result = await tripServices.createTrip(req.body, user);
+  async (req: Request & { user?: any }, res: Response) => {
+    const user = req.user;
+    const result = await tripServices.createTrip(req.body, user);
 
-		sendResponse(res, {
-            success: true,
-			statusCode: 201,
-			message: "Trip created successfully",
-			data: result,
-		});
-	}
+    sendResponse(res, {
+      success: true,
+      statusCode: 201,
+      message: "Trip created successfully",
+      data: result,
+    });
+  }
+);
+const getSingleTrip = catchAsync(
+  async (req: Request & { user?: any }, res: Response) => {
+    const result = await tripServices.getSingleTrip(req.params.id);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: 201,
+      message: "Trip Retrieved successfully",
+      data: result,
+    });
+  }
 );
 
 //get all trip
 
 const getAllTrips = catchAsync(async (req: Request, res: Response) => {
+  const filters = pick(req.query, tripFilterableFields);
 
-	const filters = pick(req.query, tripFilterableFields);
+  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
 
-	const options = pick(req.query, ["limit","page","sortBy", "sortOrder", ])
-	
-	
-	const result = await tripServices.getAllTrips(
-		filters, options
-	);
+  const result = await tripServices.getAllTrips(filters, options);
 
-	sendResponse(res, {
-        success: true,
-		statusCode: 200,
-		message: "Trips retrieved successfully",
-		meta: result.meta,
-		data: result.data,
-	});
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Trips retrieved successfully",
+    meta: result.meta,
+    data: result.data,
+  });
 });
 
+const getMyTrips = catchAsync(
+  async (req: Request & { user?: any }, res: Response) => {
+    const user = req?.user;
 
+    const result = await tripServices.getMyTrips(user);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Trips retrieved successfully",
+      data: result,
+    });
+  }
+);
 
 const deleteTrip = catchAsync(async (req: Request, res: Response) => {
-	const result = await tripServices.deleteTrip(req.params.id);
-	sendResponse(res, {
-        success: true,
-		statusCode: 200,
-		message: "Trips retrieved successfully",
-		data: result,
-	});
-})
+  const result = await tripServices.deleteTrip(req.params.id);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Trips retrieved successfully",
+    data: result,
+  });
+});
 
 // const getSingleTrip =
 export const tripController = {
-	createTrip,
-	getAllTrips,
-	deleteTrip
+  createTrip,
+  getAllTrips,
+  deleteTrip,
+  getSingleTrip,
+  getMyTrips,
 };

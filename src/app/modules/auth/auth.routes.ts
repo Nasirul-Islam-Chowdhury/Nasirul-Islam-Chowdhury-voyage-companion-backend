@@ -15,7 +15,7 @@ router.post(
     AuthController.refreshToken
 )
 
-router.post(
+router.patch(
     '/change-password',
     auth(
         UserRole.ADMIN,

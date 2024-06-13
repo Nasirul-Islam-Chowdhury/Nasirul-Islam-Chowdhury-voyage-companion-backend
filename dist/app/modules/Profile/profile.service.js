@@ -16,37 +16,37 @@ exports.profileServices = void 0;
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 //get user profile by token
 const getUserProfile = (user) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.user.findUnique({
+    const result = yield prisma_1.default.profile.findFirst({
         where: {
-            email: user.email,
-            id: user.id,
+            userId: user.userId,
         },
-        select: {
-            id: true,
-            email: true,
-            username: true,
-            createdAt: true,
-            updatedAt: true,
+        include: {
+            user: true,
         },
     });
     return result;
 });
 //update profile
 const updateProfile = (user, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.user.update({
-        where: {
-            id: user.id,
-            email: user.email,
-        },
-        data: Object.assign({}, payload),
-        select: {
-            id: true,
-            email: true,
-            username: true,
-            createdAt: true,
-            updatedAt: true,
-        },
-    });
+    const { profile } = payload;
+    let result;
+    const data = Object.assign(Object.assign({}, profile), { userId: user.userId });
+    if (profile) {
+        result = yield prisma_1.default.profile.update({
+            where: {
+                userId: user.userId,
+            },
+            data,
+        });
+    }
+    if (payload.username) {
+        yield prisma_1.default.user.update({
+            where: {
+                id: user.userId,
+            },
+            data: { username: payload.username }
+        });
+    }
     return result;
 });
 exports.profileServices = {

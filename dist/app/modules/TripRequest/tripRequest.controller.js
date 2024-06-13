@@ -18,11 +18,21 @@ const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
 const tripRequest_service_1 = require("./tripRequest.service");
 //create buddyRequest
 const createBuddyRequest = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield tripRequest_service_1.buddyRequestServices.createBuddyRequest(req.body, req.params.tripId);
+    const user = req.user;
+    const result = yield tripRequest_service_1.buddyRequestServices.createBuddyRequest(req.params.tripId, user);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: 201,
         message: "Travel buddy request sent successfully",
+        data: result,
+    });
+}));
+const deleteTripRequest = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield tripRequest_service_1.buddyRequestServices.deleteTripRequest(req.params.id);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: 201,
+        message: "Travel buddy request deleted successfully",
         data: result,
     });
 }));
@@ -36,10 +46,30 @@ const getBuddyRequest = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
         data: result,
     });
 }));
+const getMyRequest = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const result = yield tripRequest_service_1.buddyRequestServices.getMyRequest(user === null || user === void 0 ? void 0 : user.userId);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: 200,
+        message: "My Request retrieved successfully",
+        data: result,
+    });
+}));
+const getMyPostedTripsRequest = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const result = yield tripRequest_service_1.buddyRequestServices.getMyPostedTripsRequest(user === null || user === void 0 ? void 0 : user.userId);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: 200,
+        message: "My Request retrieved successfully",
+        data: result,
+    });
+}));
 //update buddy request
 const updateBuddyRequest = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { buddyId } = req.params;
-    const result = yield tripRequest_service_1.buddyRequestServices.updateBuddyRequest(req.body, buddyId);
+    const id = req.params.id;
+    const result = yield tripRequest_service_1.buddyRequestServices.updateBuddyRequest(req.body, id);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: 200,
@@ -47,4 +77,11 @@ const updateBuddyRequest = (0, catchAsync_1.default)((req, res) => __awaiter(voi
         data: result,
     });
 }));
-exports.TripRequestController = { createBuddyRequest, getBuddyRequest, updateBuddyRequest };
+exports.TripRequestController = {
+    createBuddyRequest,
+    getBuddyRequest,
+    updateBuddyRequest,
+    getMyRequest,
+    deleteTripRequest,
+    getMyPostedTripsRequest
+};

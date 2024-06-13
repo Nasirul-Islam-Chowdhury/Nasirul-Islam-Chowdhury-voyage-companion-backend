@@ -34,6 +34,10 @@ const createTrip = (payload, user) => __awaiter(void 0, void 0, void 0, function
     });
     return result;
 });
+const getSingleTrip = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.trip.findUnique({ where: { id } });
+    return result;
+});
 //get all trip
 const getAllTrips = (query, options) => __awaiter(void 0, void 0, void 0, function* () {
     const { page, limit, skip } = paginationHelper_1.paginationHelper.calculatePagination(options);
@@ -81,7 +85,20 @@ const getAllTrips = (query, options) => __awaiter(void 0, void 0, void 0, functi
         data: result,
     };
 });
+const getMyTrips = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.trip.findMany({
+        where: { userId: user === null || user === void 0 ? void 0 : user.userId },
+    });
+    return result;
+});
+const deleteTrip = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.trip.delete({ where: { id: id } });
+    return result;
+});
 exports.tripServices = {
     createTrip,
     getAllTrips,
+    deleteTrip,
+    getSingleTrip,
+    getMyTrips,
 };

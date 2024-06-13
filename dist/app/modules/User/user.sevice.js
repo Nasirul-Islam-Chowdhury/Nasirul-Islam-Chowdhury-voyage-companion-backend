@@ -116,11 +116,13 @@ const changeProfileStatus = (id, status) => __awaiter(void 0, void 0, void 0, fu
             id,
         },
     });
+    if (!userData)
+        throw new ApiError_1.default(500, "User not found");
     const updateUserStatus = yield prisma_1.default.user.update({
         where: {
             id,
         },
-        data: status,
+        data: { status: status },
     });
     return updateUserStatus;
 });
@@ -131,13 +133,7 @@ const updateMyProfie = (user, req) => __awaiter(void 0, void 0, void 0, function
             status: "ACTIVE",
         },
     });
-    // const file = req.file as IFile;
-    // if (file) {
-    //     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
-    //     req.body.profilePhoto = uploadToCloudinary?.secure_url;
-    // }
-    let profileInfo;
-    return profileInfo;
+    return userInfo;
 });
 const getMyProfile = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const res = yield prisma_1.default.user.findFirst({ where: { email: data === null || data === void 0 ? void 0 : data.email } });

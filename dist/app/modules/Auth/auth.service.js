@@ -20,17 +20,17 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const config_1 = __importDefault(require("../../../config"));
 const ApiError_1 = __importDefault(require("../../errors/ApiError"));
 const http_status_1 = __importDefault(require("http-status"));
+const auth_utils_1 = require("./auth.utils");
 const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const userData = yield prisma_1.default.user.findUniqueOrThrow({
         where: {
             email: payload.email,
-            status: client_1.UserStatus.ACTIVE
+            status: client_1.UserStatus.ACTIVE,
         },
     });
     if (!userData) {
         throw new ApiError_1.default(500, "User not found");
     }
-    ;
     const isCorrectPassword = yield bcrypt_1.default.compare(payload === null || payload === void 0 ? void 0 : payload.password, userData === null || userData === void 0 ? void 0 : userData.password);
     if (!isCorrectPassword) {
         throw new Error("Password is incorrect!");
@@ -38,12 +38,12 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const accessToken = jwtHelpers_1.jwtHelpers.generateToken({
         email: userData.email,
         userId: userData.id,
-        role: "USER",
+        role: userData.role,
     }, config_1.default.jwt.jwt_secret, config_1.default.jwt.expires_in);
     const refreshToken = jwtHelpers_1.jwtHelpers.generateToken({
         email: userData.email,
         userId: userData.id,
-        role: "USER",
+        role: userData.role,
     }, config_1.default.jwt.refresh_token_secret, config_1.default.jwt.refresh_token_expires_in);
     return {
         accessToken,
@@ -79,9 +79,10 @@ const changePassword = (user, payload) => __awaiter(void 0, void 0, void 0, func
             status: client_1.UserStatus.ACTIVE,
         },
     });
-    const isCorrectPassword = yield bcrypt_1.default.compare(payload.oldPassword, userData.password);
-    if (!isCorrectPassword) {
-        throw new Error("Password incorrect!");
+    console.log(payload);
+    if (userData.password &&
+        !(yield auth_utils_1.AuthUtils.comparePasswords(payload.oldPassword, userData === null || userData === void 0 ? void 0 : userData.password))) {
+        throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "Old Password is incorrect");
     }
     const hashedPassword = yield bcrypt_1.default.hash(payload.newPassword, 12);
     yield prisma_1.default.user.update({

@@ -11,6 +11,7 @@ import config from "../../../config";
 
 
 const createUser = async (data: User & { profile: Profile }) => {
+
   const { profile, password, ...restData } = data;
   const hashedPassword = await bcrypt.hash(
     password,
@@ -135,15 +136,7 @@ const updateMyProfie = async (user: IAuthUser, req: Request) => {
     },
   });
 
-  // const file = req.file as IFile;
-  // if (file) {
-  //     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
-  //     req.body.profilePhoto = uploadToCloudinary?.secure_url;
-  // }
-
-  let profileInfo;
-
-  return profileInfo;
+  return userInfo;
 };
 
 const getMyProfile = async(data: IAuthUser) => {

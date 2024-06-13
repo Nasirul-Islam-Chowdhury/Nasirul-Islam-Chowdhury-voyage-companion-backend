@@ -18,19 +18,15 @@ const createTrip = async (payload: Trip, user: JwtPayload) => {
     ...payload,
     userId: user?.userId,
   };
-  const isTripExists = await prisma.trip.findFirst({
-    where: {
-      userId: user.userId,
-      destination: data.destination,
-      startDate: data.startDate,
-      endDate: data.endDate,
-    },
-  });
-  if (isTripExists) throw new ApiError(500, "Trip already exists");
 
   const result = await prisma.trip.create({
     data: data,
   });
+
+  return result;
+};
+const getSingleTrip = async (id: string) => {
+  const result = await prisma.trip.findUnique({ where: { id } });
 
   return result;
 };
@@ -94,14 +90,22 @@ const getAllTrips = async (
   };
 };
 
+const getMyTrips = async (user: JwtPayload) => {
+  const result = await prisma.trip.findMany({
+    where: { userId: user?.userId },
+  });
 
+  return result;
+};
 
-const deleteTrip = async (id:string)=>{
-  const result = await prisma.trip.delete({where:{id: id}});
-  return result
-}
+const deleteTrip = async (id: string) => {
+  const result = await prisma.trip.delete({ where: { id: id } });
+  return result;
+};
 export const tripServices = {
   createTrip,
   getAllTrips,
-  deleteTrip
+  deleteTrip,
+  getSingleTrip,
+  getMyTrips,
 };

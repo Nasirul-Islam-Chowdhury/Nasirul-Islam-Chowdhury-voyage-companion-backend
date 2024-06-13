@@ -8,6 +8,7 @@ const user_routes_1 = require("../modules/User/user.routes");
 const auth_routes_1 = require("../modules/Auth/auth.routes");
 const profile_route_1 = require("../modules/Profile/profile.route");
 const trip_route_1 = require("../modules/Trip/trip.route");
+const tripRequest_route_1 = require("../modules/TripRequest/tripRequest.route");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
@@ -25,6 +26,10 @@ const moduleRoutes = [
     {
         path: "/trips",
         route: trip_route_1.TravelRoutes,
+    },
+    {
+        path: "/trip-request",
+        route: tripRequest_route_1.TripRequestRoutes,
     },
 ];
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

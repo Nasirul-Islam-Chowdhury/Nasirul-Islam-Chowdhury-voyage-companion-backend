@@ -26,4 +26,9 @@ const createUser = zod_1.z.object({
             .optional(),
     }),
 });
-exports.userValidation = { createUser };
+const updateStatus = zod_1.z.object({
+    body: zod_1.z.object({
+        status: zod_1.z.string().optional(),
+    }),
+});
+exports.userValidation = { createUser, updateStatus };

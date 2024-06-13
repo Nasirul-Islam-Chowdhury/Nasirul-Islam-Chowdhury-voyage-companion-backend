@@ -13,12 +13,16 @@ router.post(
   validateRequest(tripValidation.createTrip),
   tripController.createTrip
 );
-router.get("/", 
+router.get(
+  "/",
+  tripController.getAllTrips
+);
+router.get("/my-trips",
   auth(UserRole.ADMIN, UserRole.USER),
-   tripController.getAllTrips);
+  tripController.getMyTrips);
 
-router.delete("/:id", 
-  auth(UserRole.ADMIN),
-   tripController.deleteTrip);
+router.get("/:id", tripController.getSingleTrip);
+
+router.delete("/:id",   auth(UserRole.ADMIN, UserRole.USER), tripController.deleteTrip);
 
 export const TravelRoutes = router;

@@ -6,23 +6,22 @@ import config from "../../../config";
 
 import ApiError from "../../errors/ApiError";
 import httpStatus from "http-status";
+import { AuthUtils } from "./auth.utils";
 
 const loginUser = async (payload: { email: string; password: string }) => {
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
       email: payload.email,
-      status: UserStatus.ACTIVE
+      status: UserStatus.ACTIVE,
     },
   });
   if (!userData) {
     throw new ApiError(500, "User not found");
   }
-;
   const isCorrectPassword: boolean = await bcrypt.compare(
     payload?.password,
     userData?.password
   );
-
 
   if (!isCorrectPassword) {
     throw new Error("Password is incorrect!");
@@ -85,21 +84,22 @@ const refreshToken = async (token: string) => {
   };
 };
 
-const changePassword = async (user: any, payload: any) => {
+const changePassword = async (
+  user: any,
+  payload: { oldPassword: string; newPassword: string }
+) => {
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
       email: user.email,
       status: UserStatus.ACTIVE,
     },
   });
-
-  const isCorrectPassword: boolean = await bcrypt.compare(
-    payload.oldPassword,
-    userData.password
-  );
-
-  if (!isCorrectPassword) {
-    throw new Error("Password incorrect!");
+  console.log(payload);
+  if (
+    userData.password &&
+    !(await AuthUtils.comparePasswords(payload.oldPassword, userData?.password))
+  ) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Old Password is incorrect");
   }
 
   const hashedPassword: string = await bcrypt.hash(payload.newPassword, 12);
@@ -128,7 +128,7 @@ const forgotPassword = async (payload: { email: string }) => {
 
   const resetPassToken = jwtHelpers.generateToken(
     { email: userData.email, role: userData.role },
-    config.jwt.reset_pass_secret as string   ,
+    config.jwt.reset_pass_secret as string,
     config.jwt.reset_pass_token_expires_in as string
   );
 
@@ -158,8 +158,6 @@ const resetPassword = async (
   token: string,
   payload: { id: string; password: string }
 ) => {
-
-
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
       id: payload.id,

@@ -19,8 +19,12 @@ const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
 const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.AuthServices.loginUser(req.body);
-    const { refreshToken } = result;
+    const { refreshToken, accessToken } = result;
     res.cookie('refreshToken', refreshToken, {
+        secure: false,
+        httpOnly: true
+    });
+    res.cookie('accessToken', accessToken, {
         secure: false,
         httpOnly: true
     });

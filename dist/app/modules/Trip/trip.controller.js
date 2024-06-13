@@ -28,10 +28,19 @@ const createTrip = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
         data: result,
     });
 }));
+const getSingleTrip = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield trip_service_1.tripServices.getSingleTrip(req.params.id);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: 201,
+        message: "Trip Retrieved successfully",
+        data: result,
+    });
+}));
 //get all trip
 const getAllTrips = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const filters = (0, pick_1.default)(req.query, trip_constant_1.tripFilterableFields);
-    const options = (0, pick_1.default)(req.query, ["limit", "page", "sortBy", "sortOrder",]);
+    const options = (0, pick_1.default)(req.query, ["limit", "page", "sortBy", "sortOrder"]);
     const result = yield trip_service_1.tripServices.getAllTrips(filters, options);
     (0, sendResponse_1.default)(res, {
         success: true,
@@ -41,8 +50,30 @@ const getAllTrips = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
         data: result.data,
     });
 }));
+const getMyTrips = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req === null || req === void 0 ? void 0 : req.user;
+    const result = yield trip_service_1.tripServices.getMyTrips(user);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: 200,
+        message: "Trips retrieved successfully",
+        data: result,
+    });
+}));
+const deleteTrip = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield trip_service_1.tripServices.deleteTrip(req.params.id);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: 200,
+        message: "Trips retrieved successfully",
+        data: result,
+    });
+}));
 // const getSingleTrip =
 exports.tripController = {
     createTrip,
     getAllTrips,
+    deleteTrip,
+    getSingleTrip,
+    getMyTrips,
 };
